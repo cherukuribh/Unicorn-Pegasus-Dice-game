@@ -1,0 +1,263 @@
+
+Code for playing both in parallel versions:
+
+Program to play both unicorn and Pegasus in parallel - Multiprocessing 
+from multiprocessing import Pool
+import time
+import logging
+from pftask2final import play_unicornorpegasus
+
+def logger_setup(path):
+    logging.basicConfig(level=logging.DEBUG,
+    format='%(asctime)s %(levelname)s %(message)s',
+        filename="./" + path + ".log",
+        filemode='a')
+    logger = logging.getLogger(path)
+    return logger
+
+logger = logger_setup('code_execution')
+
+def test_function(name):
+    st = time.time()
+    play_unicornorpegasus(name)
+    logger.info(f'multiprocessing time taken for {name} : {time.time() - st}')
+
+def testing_multiprocessing(names): 
+    with Pool(len(names)) as p:
+        p.map(test_function,[name for name in names])
+    
+if __name__ == '__main__':
+    names = ['unicorn', 'pegasus']
+    testing_multiprocessing(names)
+
+Function used to play unicorn/Pegasus dice game:
+import random
+ 
+def play_unicornorpegasus(game):
+    """ get started with the game you have 
+            selected unicorn or pegasus.
+     Keep rolling a dice until we collect 
+        all the body parts of a unicorn or pegasus."""
+    count_body = 0
+    count_tail = 0
+    count_leg = 0
+    count_head = 0
+    count_eye = 0
+    count_mouth = 0
+    count_horn = 0
+    count_wing = 0
+    rolls = 0
+    count_rolls_horn = 0
+    count_rolls_wing = 0
+    roll_dice = 0
+    while (roll_dice!=1):
+        roll_dice = random.randint(1,8)
+        print('output of rolling a dice ', rolls+1 ,'times is',roll_dice)
+        if (roll_dice == 8):
+            count_rolls_horn += 1
+        if (roll_dice == 7):
+            count_rolls_wing += 1
+        rolls +=1
+    count_body += 1
+    print('well done you collected a body')
+    print('number of rolls to get body : ',rolls)
+    dice = True
+    while (dice):
+        roll_dice = random.randint(1,8)
+        print('output of rolling a dice ', rolls+1 ,'times is',roll_dice)
+        rolls +=1
+        if (roll_dice == 8):
+            count_rolls_horn += 1
+        if (roll_dice == 7):
+            count_rolls_wing += 1
+        if (roll_dice == 2 and count_tail == 0):
+            count_tail += 1
+            print("we got ",count_tail," tail ")
+        elif(roll_dice == 3 and count_leg < 4):
+            count_leg += 1
+            print("we got ",count_leg," leg ")
+        elif(roll_dice == 4 and count_head == 0):
+            count_head += 1
+            print("we got ",count_head," head ")
+        elif(roll_dice == 5 and count_head == 1 and count_eye < 2):            
+            count_eye += 1
+            print("we got ",count_eye," eye ")
+        elif(roll_dice == 6 and count_head == 1 and count_mouth < 1):
+            count_mouth += 1
+            print("we got ",count_mouth," mouth ")
+        elif(roll_dice == 8 and count_head == 1 and game == "unicorn" and count_horn < 1 ):
+            count_horn += 1
+            print("we got ",count_horn," horn ")
+        elif(roll_dice == 7 and count_head == 1 and count_wing < 2 and game == "pegasus"):
+            count_wing += 1
+            print("we got ",count_wing," wing ")
+        elif(count_body == 1 and count_tail == 1 and count_leg == 4 and
+           count_head == 1 and count_eye == 2 and count_mouth == 1 and count_horn == 1):
+            dice = False
+            print('well done you have collected all the body_parts of unicorn')
+            print("collected : body-1,tail-1,leg-4,head-1,eye-2,mouth-1,horn-1")
+            print('number of rolls to get all the body_parts of unicorn : ',rolls)
+            print('number of times we get wings while we roll the dice through out the game:',count_rolls_wing)
+            print('number of times we get horn while we roll the dice through out the game:',count_rolls_horn)
+        elif(count_body == 1 and count_tail == 1 and count_leg == 4 and
+           count_head == 1 and count_eye == 2 and count_mouth == 1 and count_wing == 2):
+            dice = False
+            print('well done you have collected all the body_parts of pegasus') 
+            print("collected : body-1,tail-1,leg-4,head-1,eye-2,mouth-1,wing-2")
+            print('number of rolls to collect all the body_parts of pegasus : ',rolls)
+            print('number of times we get wings while we roll the dice through out the game:',count_rolls_wing)
+            print('number of times we get horn while we roll the dice through out the game:',count_rolls_horn)
+        else:
+            print("not a valid dice roll")
+    return()
+
+if __name__ == '__main__':
+    pass
+
+Output of playing both unicorn and Pegasus in parallel :
+
+output of rolling a dice  1 times is 6
+output of rolling a dice  2 times is 8
+output of rolling a dice  3 times is 4
+output of rolling a dice  4 times is 1
+well done you collected a body
+number of rolls to get body :  4
+output of rolling a dice  5 times is 2
+we got  1  tail 
+output of rolling a dice  1 times is 6
+output of rolling a dice  6 times is 6
+not a valid dice roll
+output of rolling a dice  2 times is 4
+output of rolling a dice  7 times is 7
+not a valid dice roll
+output of rolling a dice  3 times is 4
+output of rolling a dice  8 times is 8
+output of rolling a dice  4 times is 8
+not a valid dice roll
+output of rolling a dice  5 times is 3
+output of rolling a dice  9 times is 3
+output of rolling a dice  6 times is 1
+we got  1  leg 
+well done you collected a body
+output of rolling a dice  10 times is 3
+number of rolls to get body :  6
+we got  2  leg 
+output of rolling a dice  7 times is 6
+output of rolling a dice  11 times is 2
+not a valid dice roll
+not a valid dice roll
+output of rolling a dice  8 times is 4
+output of rolling a dice  12 times is 3
+we got  3  leg 
+we got  1  head 
+output of rolling a dice  13 times is 7
+output of rolling a dice  9 times is 7
+not a valid dice roll
+we got  1  wing 
+output of rolling a dice  14 times is 5
+output of rolling a dice  10 times is 8
+not a valid dice roll
+not a valid dice roll
+output of rolling a dice  15 times is 5
+output of rolling a dice  11 times is 4
+not a valid dice roll
+not a valid dice roll
+output of rolling a dice  16 times is 5
+output of rolling a dice  12 times is 1
+not a valid dice roll
+not a valid dice roll
+output of rolling a dice  17 times is 2
+output of rolling a dice  13 times is 1
+not a valid dice roll
+not a valid dice roll
+output of rolling a dice  18 times is 4
+output of rolling a dice  14 times is 8
+not a valid dice roll
+we got  1  head 
+output of rolling a dice  15 times is 8
+output of rolling a dice  19 times is 4
+not a valid dice roll
+not a valid dice roll
+output of rolling a dice  16 times is 2
+output of rolling a dice  20 times is 2
+not a valid dice roll
+we got  1  tail 
+output of rolling a dice  21 times is 5
+output of rolling a dice  17 times is 5
+we got  1  eye 
+we got  1  eye 
+output of rolling a dice  22 times is 6
+output of rolling a dice  18 times is 1
+we got  1  mouth 
+not a valid dice roll
+output of rolling a dice  23 times is 2
+output of rolling a dice  19 times is 8
+not a valid dice roll
+not a valid dice roll
+output of rolling a dice  24 times is 8
+output of rolling a dice  20 times is 2
+we got  1  horn 
+not a valid dice roll
+output of rolling a dice  25 times is 5
+output of rolling a dice  21 times is 7
+we got  2  eye 
+we got  2  wing 
+output of rolling a dice  26 times is 3
+output of rolling a dice  22 times is 3
+we got  4  leg 
+we got  1  leg 
+output of rolling a dice  27 times is 2
+output of rolling a dice  23 times is 3
+we got  2  leg 
+well done you have collected all the body_parts of unicorn
+output of rolling a dice  24 times is 7
+collected : body-1,tail-1,leg-4,head-1,eye-2,mouth-1,horn-1
+not a valid dice roll
+number of rolls to collect all the body_parts of unicorn :  27
+output of rolling a dice  25 times is 1
+not a valid dice roll
+number of times we get wings while we roll the dice through out the game: 2
+output of rolling a dice  26 times is 1
+number of times we get horn while we roll the dice through out the game: 3
+not a valid dice roll
+output of rolling a dice  27 times is 8
+not a valid dice roll
+output of rolling a dice  28 times is 7
+not a valid dice roll
+output of rolling a dice  29 times is 2
+not a valid dice roll
+output of rolling a dice  30 times is 8
+not a valid dice roll
+output of rolling a dice  31 times is 2
+not a valid dice roll
+output of rolling a dice  32 times is 4
+not a valid dice roll
+output of rolling a dice  33 times is 5
+we got  2  eye 
+output of rolling a dice  34 times is 6
+we got  1  mouth 
+output of rolling a dice  35 times is 1
+not a valid dice roll
+output of rolling a dice  36 times is 3
+we got  3  leg 
+output of rolling a dice  37 times is 2
+not a valid dice roll
+output of rolling a dice  38 times is 1
+not a valid dice roll
+output of rolling a dice  39 times is 8
+not a valid dice roll
+output of rolling a dice  40 times is 5
+not a valid dice roll
+output of rolling a dice  41 times is 1
+not a valid dice roll
+output of rolling a dice  42 times is 2
+not a valid dice roll
+output of rolling a dice  43 times is 3
+we got  4  leg 
+output of rolling a dice  44 times is 6
+well done you have collected all the body_parts of pegasus
+collected : body-1,tail-1,leg-4,head-1,eye-2,mouth-1,wing-2
+number of rolls to collect all the body_parts of pegasus :  44
+number of times we get wings while we roll the dice through out the game: 4
+number of times we get horn while we roll the dice through out the game: 8
+
